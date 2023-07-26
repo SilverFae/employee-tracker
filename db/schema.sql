@@ -6,7 +6,7 @@ USE employee_db;
 -- Create tables for employee, role, and department
 CREATE TABLE employee (
     -- setting id as primary key and auto incrementing
-    id INT NOT NULL AUTO_INCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     -- setting first_name as not null
     first_name VARCHAR(30) NOT NULL,
     -- setting last_name as not null
@@ -18,13 +18,13 @@ CREATE TABLE employee (
 );
 
 CREATE TABLE role (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL(10,2) NOT NULL,
     department_id INT NOT NULL,
 );
 
 CREATE TABLE department (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(30) NOT NULL,
 );
