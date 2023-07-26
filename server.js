@@ -90,7 +90,7 @@ const viewEmployees = () => {
         if (err) throw err;
         console.table(res);
         start();
-    }); 
+    });
 }
 
 // this function will display all departments
@@ -103,6 +103,19 @@ const viewDepartments = () => {
     }
     );
 }
+
+// this function will display all roles
+const viewRoles = () => {
+    const query = 'SELECT * FROM role';
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+    }
+    );
+}
+
+
 
 
 
