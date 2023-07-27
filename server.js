@@ -31,15 +31,9 @@ const start = () => {
             'View all departments',
             'View all roles',
             'View all employees by department',
-            'Update employee roles',
-            'Update employee manager',
             'Add employee',
             'Add department',
             'Add roles',
-            'Remove employee',
-            'Remove department',
-            'Remove roles',
-            'View department budget',
             'Exit'
         ]
     }).then((answer) => {
