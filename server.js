@@ -214,37 +214,37 @@ const updateEmployeeManager = () => {
     );
 }
 
-// this function will add an employee
+// This function will add an employee
 const addEmployee = () => {
-    //this query will select all roles from the roles table
-    const query = 'SELECT role_id, roles.title FROM roles';
+    // This query will select all roles from the roles table
+    const query = 'SELECT id, title FROM roles'; // Changed 'roles_id' to 'id'
     connection.query(query, (err, res) => {
         if (err) throw err;
-        // this will create an array of objects with the roles's id and title
+        // This will create an array of objects with the roles' id and title
         const roles = res.map(({ id, title }) => ({
             name: title,
             value: id
         }));
-        // this will prompt the user to enter the employee's first name, last name, and roles
+        // This will prompt the user to enter the employee's first name, last name, and roles
         inquirer.prompt([
             {
                 name: 'first_name',
                 type: 'input',
-                message: 'What is the employee\'s first name?'
+                message: "What is the employee's first name?"
             },
             {
                 name: 'last_name',
                 type: 'input',
-                message: 'What is the employee\'s last name?'
+                message: "What is the employee's last name?"
             },
             {
                 name: 'roles',
                 type: 'list',
-                message: 'What is the employee\'s roles?',
+                message: "What is the employee's role?",
                 choices: roles
             }
         ]).then((answer) => {
-            // this will insert the new employee into the employee table
+            // This will insert the new employee into the employee table
             const query = 'INSERT INTO employee SET ?';
             connection.query(query, {
                 first_name: answer.first_name,
@@ -256,9 +256,8 @@ const addEmployee = () => {
                 start();
             });
         });
-    }
-    );
-}
+    });
+};
 
 // this function will add a department
 const addDepartment = () => {
@@ -281,7 +280,7 @@ const addDepartment = () => {
 
 // this function will add a roles
 const addRole = () => {
-    const query = 'SELECT role_id, roles.title FROM roles';
+    const query = 'SELECT roles_id, roles.title FROM roles';
     connection.query(query, (err, res) => {
         if (err) throw err;
         // this will create an array of objects with the roles's id and title
@@ -302,7 +301,7 @@ const addRole = () => {
                 message: 'What is the roles\'s salary?'
             },
             {
-                name: 'department',
+                name: 'department_name',
                 type: 'list',
                 message: 'Which department does the roles belong to?',
                 choices: roles
