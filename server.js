@@ -85,7 +85,7 @@ const start = () => {
 
 // this function will display all employees
 const viewEmployees = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name AS department, CONCAT(manager.first_name, " ", manager.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id';
+    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department_name AS department, CONCAT(manager.first_name, " ", manager.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id';
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -206,10 +206,123 @@ const updateEmployeeManager = () => {
     );
 }
 
+// this function will add an employee
+const addEmployee = () => {
+    //this query will select all roles from the role table
+    const query = 'SELECT role.id, role.title FROM role';
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        // this will create an array of objects with the role's id and title
+        const roles = res.map(({ id, title }) => ({
+            name: title,
+            value: id
+        }));
+        // this will prompt the user to enter the employee's first name, last name, and role
+        inquirer.prompt([
+            {
+                name: 'first_name',
+                type: 'input',
+                message: 'What is the employee\'s first name?'
+            },
+            {
+                name: 'last_name',
+                type: 'input',
+                message: 'What is the employee\'s last name?'
+            },
+            {
+                name: 'role',
+                type: 'list',
+                message: 'What is the employee\'s role?',
+                choices: roles
+            }
+        ]).then((answer) => {
+            // this will insert the new employee into the employee table
+            const query = 'INSERT INTO employee SET ?';
+            connection.query(query, {
+                first_name: answer.first_name,
+                last_name: answer.last_name,
+                role_id: answer.role
+            }, (err, res) => {
+                if (err) throw err;
+                console.log('Employee added!');
+                start();
+            });
+        });
+    }
+    );
+}
 
+// this function will add a department
+const addDepartment = () => {
+    const query = 'SELECT department.id, department.name FROM department';
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        // this will prompt the user to enter the department's name
+        inquirer.prompt([
+            {
+                name: 'name',
+                type: 'input',
+                message: 'What is the department\'s name?'
+            }
+        ]).then((answer) => {
+            // this will insert the new department into the department table
+            const query = 'INSERT INTO department SET ?';
+            connection.query(query, {
+                name: answer.name
+            }, (err, res) => {
+                if (err) throw err;
+                console.log('Department added!');
+                start();
+            });
+        });
+    }
+    );
+}
 
-
-
+// this function will add a role
+const addRole = () => {
+    const query = 'SELECT role.id, role.title FROM role';
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        // this will create an array of objects with the role's id and title
+        const roles = res.map(({ id, title }) => ({
+            name: title,
+            value: id
+        }));
+        // this will prompt the user to enter the role's title, salary, and department
+        inquirer.prompt([
+            {
+                name: 'title',
+                type: 'input',
+                message: 'What is the role\'s title?'
+            },
+            {
+                name: 'salary',
+                type: 'input',
+                message: 'What is the role\'s salary?'
+            },
+            {
+                name: 'department',
+                type: 'list',
+                message: 'Which department does the role belong to?',
+                choices: roles
+            }
+        ]).then((answer) => {
+            // this will insert the new role into the role table
+            const query = 'INSERT INTO role SET ?';
+            connection.query(query, {
+                title: answer.title,
+                salary: answer.salary,
+                department_id: answer.department
+            }, (err, res) => {
+                if (err) throw err;
+                console.log('Role added!');
+                start();
+            });
+        });
+    }
+    );
+}
 
 
 

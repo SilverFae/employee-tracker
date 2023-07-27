@@ -14,17 +14,17 @@ CREATE TABLE employee (
     -- setting role_id as not null
     role_id INT NOT NULL,
     -- setting manager_id as null
-    manager_id INT NULL,
+    manager_id INT NULL
 );
 
 CREATE TABLE role (
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL(10,2) NOT NULL,
-    department_id INT NOT NULL,
+    department_id INT NOT NULL
 );
 
 CREATE TABLE department (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(30) NOT NULL,
+    department_name VARCHAR(30) NOT NULL
 );
