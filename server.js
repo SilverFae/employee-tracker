@@ -1,9 +1,9 @@
-
 const inquirer = require('inquirer');
 const mysql2 = require('mysql2');
 const chalk = require('chalk');
 const figlet = require('figlet');
 
+// this will create the connection to the databaseq
 const connection = mysql2.createConnection({
     host: 'localhost',
     port: 3306,
@@ -12,6 +12,7 @@ const connection = mysql2.createConnection({
     database: 'employee_db'
 });
 
+// this will connect to the database
 connection.connect((err) => {
     if (err) throw err;
     console.log(chalk.blue(figlet.textSync('Employee Tracker')));
@@ -75,6 +76,7 @@ const start = () => {
 
 // this function will display all employees
 const viewEmployees = () => {
+    // this query will select all employees from the employee table
     const query = 'SELECT * FROM employee';
     connection.query(query, (err, res) => {
         if (err) throw err;
@@ -85,6 +87,7 @@ const viewEmployees = () => {
 
 // this function will display all departments
 const viewDepartments = () => {
+    // this query will select all departments from the department table
     const query = 'SELECT * FROM department';
     connection.query(query, (err, res) => {
         if (err) throw err;
@@ -96,6 +99,7 @@ const viewDepartments = () => {
 
 // this function will display all roles
 const viewRoles = () => {
+    // this query will select all roles from the roles table
     const query = 'SELECT * FROM roles';
     connection.query(query, (err, res) => {
         if (err) throw err;
@@ -107,6 +111,7 @@ const viewRoles = () => {
 
 // this function will display all employees by department
 const viewEmployeesByDepartment = () => {
+    // this query will select all employees from the employee table and join with roles and department tables
     const query = 'SELECT department_name AS department, employee.id, employee.first_name, employee.last_name,' +
      'roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id ORDER BY department_name';
     connection.query(query, (err, res) => {
@@ -183,6 +188,7 @@ const addDepartment = () => {
 
 // this function will add a roles
 const addRole = () => {
+    // this query will select all roles from the roles table
     const query = 'SELECT id, title FROM roles';
     connection.query(query, (err, res) => {
         if (err) throw err;
