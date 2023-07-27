@@ -30,14 +30,14 @@ const start = () => {
             'View all departments',
             'View all roles',
             'View all employees by department',
-            'Update employee role',
+            'Update employee roles',
             'Update employee manager',
             'Add employee',
             'Add department',
-            'Add role',
+            'Add roles',
             'Remove employee',
             'Remove department',
-            'Remove role',
+            'Remove roles',
             'View department budget',
             'Exit'
         ]
@@ -57,7 +57,7 @@ const start = () => {
             case 'View all employees by department':
                 viewEmployeesByDepartment();
                 break;
-            case 'Update employee role':
+            case 'Update employee roles':
                 updateEmployeeRole();
                 break;
             case 'Update employee manager':
@@ -69,7 +69,7 @@ const start = () => {
             case 'Add department':
                 addDepartment();
                 break;
-            case 'Add role':
+            case 'Add roles':
                 addRole();
                 break;
             case 'Remove employee':
@@ -78,7 +78,7 @@ const start = () => {
             case 'Remove department':
                 removeDepartment();
                 break;
-            case 'Remove role':
+            case 'Remove roles':
                 removeRole();
                 break;
             case 'View department budget':
@@ -114,7 +114,7 @@ const viewDepartments = () => {
 
 // this function will display all roles
 const viewRoles = () => {
-    const query = 'SELECT * FROM role';
+    const query = 'SELECT * FROM roles';
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -125,30 +125,30 @@ const viewRoles = () => {
 
 // this function will display all employees by department
 const viewEmployeesByDepartment = () => {
-    const query = 'SELECT department_name AS department, employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role_id LEFT JOIN department ON role.department_id = department.id ORDER BY department_name';
+    const query = 'SELECT department_name AS department, employee.id, employee.first_name, employee.last_name,' +
+     'roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id ORDER BY department_name';
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.table(res);
         start();
-    }
-    );
+    });
 }
 
-// this function will update an employee's role
+// this function will update an employee's roles
 const updateEmployeeRole = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role_id';
+    const query = 'SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.roles_id = roles.id';
     connection.query(query, (err, res) => {
         if (err) throw err;
-        // this will create an array of objects with the employee's id, first name, last name, and role
+        // this will create an array of objects with the employee's id, first name, last name, and roles
         const employees = res.map(({ id, first_name, last_name }) => ({
             value: id,
             name: `${first_name} ${last_name}`
         }));
-        // this will create an array of objects with the role's id and title
+        // this will create an array of objects with the roles's id and title
         const roles = res.map(({ title }) => ({
             name: title
         }));
-        // this will prompt the user to select an employee and role to update
+        // this will prompt the user to select an employee and roles to update
         inquirer.prompt([
             {
                 name: 'employee',
@@ -157,18 +157,18 @@ const updateEmployeeRole = () => {
                 choices: employees
             },
             {
-                name: 'role',
+                name: 'roles',
                 type: 'list',
-                message: 'What is the employee\'s new role?',
+                message: 'What is the employee\'s new roles?',
                 choices: roles
             }
         ]).then((answer) => {
-            const { employee, role } = answer;
-            // this will update the employee's role
+            const { employee, roles } = answer;
+            // this will update the employee's roles
             const query = 'UPDATE employee SET role_id = ? WHERE id = ?';
-            connection.query(query, [role, employee], (err, res) => {
+            connection.query(query, [roles, employee], (err, res) => {
                 if (err) throw err;
-                console.log('Employee role updated successfully!');
+                console.log('Employee roles updated successfully!');
                 start();
             });
         });
@@ -178,10 +178,10 @@ const updateEmployeeRole = () => {
 
 // this function will update an employee's manager
 const updateEmployeeManager = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role_id';
+    const query = 'SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.role_id = role_id';
     connection.query(query, (err, res) => {
         if (err) throw err;
-        // this will create an array of objects with the employee's id, first name, last name, and role
+        // this will create an array of objects with the employee's id, first name, last name, and roles
         const employees = res.map(({ id, first_name, last_name }) => ({
             value: id,
             name: `${first_name} ${last_name}`
@@ -216,16 +216,16 @@ const updateEmployeeManager = () => {
 
 // this function will add an employee
 const addEmployee = () => {
-    //this query will select all roles from the role table
-    const query = 'SELECT role_id, role.title FROM role';
+    //this query will select all roles from the roles table
+    const query = 'SELECT role_id, roles.title FROM roles';
     connection.query(query, (err, res) => {
         if (err) throw err;
-        // this will create an array of objects with the role's id and title
+        // this will create an array of objects with the roles's id and title
         const roles = res.map(({ id, title }) => ({
             name: title,
             value: id
         }));
-        // this will prompt the user to enter the employee's first name, last name, and role
+        // this will prompt the user to enter the employee's first name, last name, and roles
         inquirer.prompt([
             {
                 name: 'first_name',
@@ -238,9 +238,9 @@ const addEmployee = () => {
                 message: 'What is the employee\'s last name?'
             },
             {
-                name: 'role',
+                name: 'roles',
                 type: 'list',
-                message: 'What is the employee\'s role?',
+                message: 'What is the employee\'s roles?',
                 choices: roles
             }
         ]).then((answer) => {
@@ -249,7 +249,7 @@ const addEmployee = () => {
             connection.query(query, {
                 first_name: answer.first_name,
                 last_name: answer.last_name,
-                role_id: answer.role
+                role_id: answer.roles
             }, (err, res) => {
                 if (err) throw err;
                 console.log('Employee added!');
@@ -262,69 +262,61 @@ const addEmployee = () => {
 
 // this function will add a department
 const addDepartment = () => {
-    const query = 'SELECT department.id, department_name FROM department';
-    connection.query(query, (err, res) => {
-        if (err) throw err;
-        // this will prompt the user to enter the department's name
-        inquirer.prompt([
-            {
-                name: 'name',
-                type: 'input',
-                message: 'What is the department\'s name?'
-            }
-        ]).then((answer) => {
-            // this will insert the new department into the department table
-            const query = 'INSERT INTO department SET ?';
-            connection.query(query, {
-                name: answer.name
-            }, (err, res) => {
-                if (err) throw err;
-                console.log('Department added!');
-                start();
-            });
+    inquirer.prompt([
+        {
+            name: 'department_name',
+            type: 'input',
+            message: "What is the department's name?",
+        },
+    ]).then((answer) => {
+        // this will insert the new department into the department table
+        const query = 'INSERT INTO department SET ?';
+        connection.query(query, { department_name: answer.department_name }, (err, res) => {
+            if (err) throw err;
+            console.log('Department added!');
+            start();
         });
-    }
-    );
-}
+    });
+};
 
-// this function will add a role
+// this function will add a roles
 const addRole = () => {
-    const query = 'SELECT role_id, role.title FROM role';
+    const query = 'SELECT role_id, roles.title FROM roles';
     connection.query(query, (err, res) => {
         if (err) throw err;
-        // this will create an array of objects with the role's id and title
+        // this will create an array of objects with the roles's id and title
         const roles = res.map(({ id, title }) => ({
             name: title,
             value: id
         }));
-        // this will prompt the user to enter the role's title, salary, and department
+        // this will prompt the user to enter the roles's title, salary, and department
         inquirer.prompt([
             {
                 name: 'title',
                 type: 'input',
-                message: 'What is the role\'s title?'
+                message: 'What is the roles\'s title?'
             },
             {
                 name: 'salary',
                 type: 'input',
-                message: 'What is the role\'s salary?'
+                message: 'What is the roles\'s salary?'
             },
             {
                 name: 'department',
                 type: 'list',
-                message: 'Which department does the role belong to?',
+                message: 'Which department does the roles belong to?',
                 choices: roles
             }
         ]).then((answer) => {
-            // this will insert the new role into the role table
-            const query = 'INSERT INTO role SET ?';
+            // this will insert the new roles into the roles table
+            const query = 'INSERT INTO roles SET ?';
             connection.query(query, {
                 title: answer.title,
                 salary: answer.salary,
                 department_id: answer.department
             }, (err, res) => {
                 if (err) throw err;
-                console.log('Role added!');
+                console.log('roles added!');
                 start();
             });
         });
