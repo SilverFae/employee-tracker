@@ -1,8 +1,16 @@
-const connection = require('./config/connection');
+
 const inquirer = require('inquirer');
-const cTable = require('console.table');
+const mysql2 = require('mysql2');
 const chalk = require('chalk');
 const figlet = require('figlet');
+
+const connection = mysql2.createConnection({
+    host: 'localhost',
+    port: 3306,
+    user: "root",
+    password: 'Maddie187!',
+    database: 'employee_db'
+});
 
 connection.connect((err) => {
     if (err) throw err;
@@ -85,7 +93,7 @@ const start = () => {
 
 // this function will display all employees
 const viewEmployees = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department_name AS department, CONCAT(manager.first_name, " ", manager.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id';
+    const query = 'SELECT * FROM employee';
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -117,7 +125,7 @@ const viewRoles = () => {
 
 // this function will display all employees by department
 const viewEmployeesByDepartment = () => {
-    const query = 'SELECT department.name AS department, employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id ORDER BY department.name';
+    const query = 'SELECT department_name AS department, employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role_id LEFT JOIN department ON role.department_id = department.id ORDER BY department_name';
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -128,7 +136,7 @@ const viewEmployeesByDepartment = () => {
 
 // this function will update an employee's role
 const updateEmployeeRole = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role.id';
+    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role_id';
     connection.query(query, (err, res) => {
         if (err) throw err;
         // this will create an array of objects with the employee's id, first name, last name, and role
@@ -170,7 +178,7 @@ const updateEmployeeRole = () => {
 
 // this function will update an employee's manager
 const updateEmployeeManager = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role.id';
+    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role_id';
     connection.query(query, (err, res) => {
         if (err) throw err;
         // this will create an array of objects with the employee's id, first name, last name, and role
@@ -209,7 +217,7 @@ const updateEmployeeManager = () => {
 // this function will add an employee
 const addEmployee = () => {
     //this query will select all roles from the role table
-    const query = 'SELECT role.id, role.title FROM role';
+    const query = 'SELECT role_id, role.title FROM role';
     connection.query(query, (err, res) => {
         if (err) throw err;
         // this will create an array of objects with the role's id and title
@@ -254,7 +262,7 @@ const addEmployee = () => {
 
 // this function will add a department
 const addDepartment = () => {
-    const query = 'SELECT department.id, department.name FROM department';
+    const query = 'SELECT department.id, department_name FROM department';
     connection.query(query, (err, res) => {
         if (err) throw err;
         // this will prompt the user to enter the department's name
@@ -281,7 +289,7 @@ const addDepartment = () => {
 
 // this function will add a role
 const addRole = () => {
-    const query = 'SELECT role.id, role.title FROM role';
+    const query = 'SELECT role_id, role.title FROM role';
     connection.query(query, (err, res) => {
         if (err) throw err;
         // this will create an array of objects with the role's id and title
